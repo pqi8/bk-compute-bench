@@ -1,4 +1,5 @@
 name: bench
+run-name: bench ${{ inputs.runner }}
 on:
   workflow_dispatch:
     inputs:
