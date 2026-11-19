@@ -3,7 +3,7 @@
 mise use -g node@22
 mkdir pw && cd pw && npm init -y > /dev/null
 npm install --silent -D @playwright/test@1.56
-asroot npx playwright install-deps chromium firefox
+asroot node npx playwright install-deps chromium firefox
 npx playwright install chromium firefox
 mkdir tests
 cat > playwright.config.ts <<TS

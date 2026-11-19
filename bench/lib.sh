@@ -9,6 +9,8 @@ WORK=$(mktemp -d "${TMPDIR:-/tmp}/bench.XXXXXX")
 cd "$WORK"
 # Shallow clone of one exact ref (tag or commit).
 fetch() { git init -q "$3" && git -C "$3" fetch -q --depth 1 "https://github.com/$1.git" "$2" && git -C "$3" checkout -q FETCH_HEAD; }
-# Run a mise-installed tool as root (mise shims resolve per user).
-asroot() { if [ -n "$SUDO" ]; then $SUDO env "PATH=$PATH" "$@"; else "$@"; fi; }
+# Run a mise-installed tool as root. mise's shims resolve per user, so put the tool's real
+# bin directory first: asroot node npx playwright install-deps
+asroot() { local bin; bin=$(dirname "$(mise which "$1")"); shift
+  if [ -n "$SUDO" ]; then $SUDO env "PATH=$bin:$PATH" "$@"; else PATH="$bin:$PATH" "$@"; fi; }
 echo "bench host: $(uname -m) $(nproc) vCPU $(free -g | awk '/Mem/{print $2}') GB, user $(id -un)"
