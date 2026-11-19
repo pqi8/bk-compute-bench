@@ -1,0 +1,36 @@
+name: bench
+on:
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: runs-on label
+        default: ubuntu-24.04
+        type: choice
+        options: [ubuntu-24.04, ubuntu-24.04-arm]
+jobs:
+  bench:
+    name: ${{ matrix.job }}
+    runs-on: ${{ inputs.runner }}
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - { job: rust, cmd: "bench/rust.sh" }
+          - { job: go, cmd: "bench/go.sh" }
+          - { job: python, cmd: "bench/python.sh" }
+          - { job: java, cmd: "bench/java.sh" }
+          - { job: docker-buildx, cmd: "bench/docker-buildx.sh" }
+          - { job: compose, cmd: "bench/compose.sh" }
+          - { job: redis, cmd: "bench/redis.sh" }
+          - { job: rails, cmd: "bench/rails.sh" }
+          - { job: playwright, cmd: "bench/playwright.sh" }
+          - { job: bazel, cmd: "bench/bazel.sh" }
+          - { job: pi-mono-build, cmd: "bench/pi-mono.sh build" }
+          - { job: pi-mono-coding-agent, cmd: "bench/pi-mono.sh coding-agent" }
+          - { job: pi-mono-durable, cmd: "bench/pi-mono.sh durable" }
+          - { job: pi-mono-chord, cmd: "bench/pi-mono.sh chord" }
+          - { job: pi-mono-other, cmd: "bench/pi-mono.sh other" }
+    steps:
+      - uses: actions/checkout@v4
+      - run: ${{ matrix.cmd }}

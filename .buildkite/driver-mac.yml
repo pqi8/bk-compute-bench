@@ -1,0 +1,50 @@
+# Runs 10 bench-mac builds one after another. Trigger steps need no agent.
+steps:
+  - trigger: bench-mac
+    label: "bench-mac run 1"
+    build: { message: "bench run 1" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-mac
+    label: "bench-mac run 2"
+    build: { message: "bench run 2" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-mac
+    label: "bench-mac run 3"
+    build: { message: "bench run 3" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-mac
+    label: "bench-mac run 4"
+    build: { message: "bench run 4" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-mac
+    label: "bench-mac run 5"
+    build: { message: "bench run 5" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-mac
+    label: "bench-mac run 6"
+    build: { message: "bench run 6" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-mac
+    label: "bench-mac run 7"
+    build: { message: "bench run 7" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-mac
+    label: "bench-mac run 8"
+    build: { message: "bench run 8" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-mac
+    label: "bench-mac run 9"
+    build: { message: "bench run 9" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-mac
+    label: "bench-mac run 10"
+    build: { message: "bench run 10" }

@@ -1,0 +1,50 @@
+# Runs 10 bench-hosted builds one after another. Trigger steps need no agent.
+steps:
+  - trigger: bench-hosted
+    label: "bench-hosted run 1"
+    build: { message: "bench run 1" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-hosted
+    label: "bench-hosted run 2"
+    build: { message: "bench run 2" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-hosted
+    label: "bench-hosted run 3"
+    build: { message: "bench run 3" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-hosted
+    label: "bench-hosted run 4"
+    build: { message: "bench run 4" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-hosted
+    label: "bench-hosted run 5"
+    build: { message: "bench run 5" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-hosted
+    label: "bench-hosted run 6"
+    build: { message: "bench run 6" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-hosted
+    label: "bench-hosted run 7"
+    build: { message: "bench run 7" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-hosted
+    label: "bench-hosted run 8"
+    build: { message: "bench run 8" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-hosted
+    label: "bench-hosted run 9"
+    build: { message: "bench run 9" }
+  - wait: ~
+    continue_on_failure: true
+  - trigger: bench-hosted
+    label: "bench-hosted run 10"
+    build: { message: "bench run 10" }

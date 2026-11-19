@@ -1,0 +1,93 @@
+# bk-compute benchmark: 15 jobs, each on a 4 vCPU / 16 GB machine, at most 2 at a time.
+# Generated; the job scripts live in bench/.
+steps:
+  - label: "rust"
+    key: "rust"
+    command: "bench/rust.sh"
+    agents: { queue: hosted-linux }
+    concurrency: 2
+    concurrency_group: bench-hosted/medium
+  - label: "go"
+    key: "go"
+    command: "bench/go.sh"
+    agents: { queue: hosted-linux }
+    concurrency: 2
+    concurrency_group: bench-hosted/medium
+  - label: "python"
+    key: "python"
+    command: "bench/python.sh"
+    agents: { queue: hosted-linux }
+    concurrency: 2
+    concurrency_group: bench-hosted/medium
+  - label: "java"
+    key: "java"
+    command: "bench/java.sh"
+    agents: { queue: hosted-linux }
+    concurrency: 2
+    concurrency_group: bench-hosted/medium
+  - label: "docker-buildx"
+    key: "docker-buildx"
+    command: "bench/docker-buildx.sh"
+    agents: { queue: hosted-linux }
+    concurrency: 2
+    concurrency_group: bench-hosted/medium
+  - label: "compose"
+    key: "compose"
+    command: "bench/compose.sh"
+    agents: { queue: hosted-linux }
+    concurrency: 2
+    concurrency_group: bench-hosted/medium
+  - label: "redis"
+    key: "redis"
+    command: "bench/redis.sh"
+    agents: { queue: hosted-linux }
+    concurrency: 2
+    concurrency_group: bench-hosted/medium
+  - label: "rails"
+    key: "rails"
+    command: "bench/rails.sh"
+    agents: { queue: hosted-linux }
+    concurrency: 2
+    concurrency_group: bench-hosted/medium
+  - label: "playwright"
+    key: "playwright"
+    command: "bench/playwright.sh"
+    agents: { queue: hosted-linux }
+    concurrency: 2
+    concurrency_group: bench-hosted/medium
+  - label: "bazel"
+    key: "bazel"
+    command: "bench/bazel.sh"
+    agents: { queue: hosted-linux }
+    concurrency: 2
+    concurrency_group: bench-hosted/medium
+  - label: "pi-mono-build"
+    key: "pi-mono-build"
+    command: "bench/pi-mono.sh build"
+    agents: { queue: hosted-linux }
+    concurrency: 2
+    concurrency_group: bench-hosted/medium
+  - label: "pi-mono-coding-agent"
+    key: "pi-mono-coding-agent"
+    command: "bench/pi-mono.sh coding-agent"
+    agents: { queue: hosted-linux }
+    concurrency: 2
+    concurrency_group: bench-hosted/medium
+  - label: "pi-mono-durable"
+    key: "pi-mono-durable"
+    command: "bench/pi-mono.sh durable"
+    agents: { queue: hosted-linux }
+    concurrency: 2
+    concurrency_group: bench-hosted/medium
+  - label: "pi-mono-chord"
+    key: "pi-mono-chord"
+    command: "bench/pi-mono.sh chord"
+    agents: { queue: hosted-linux }
+    concurrency: 2
+    concurrency_group: bench-hosted/medium
+  - label: "pi-mono-other"
+    key: "pi-mono-other"
+    command: "bench/pi-mono.sh other"
+    agents: { queue: hosted-linux }
+    concurrency: 2
+    concurrency_group: bench-hosted/medium
