@@ -1,0 +1,85 @@
+name: buildkite-agent
+run-name: buildkite-agent ${{ inputs.ref }} on ${{ inputs.runner }}
+# buildkite/agent CI, with the same 10 jobs as the "buildkite-agent fleet" Buildkite pipeline:
+# lint, 2 test shards, 3 race-test shards and 5 binaries, each in the agent repo's own
+# Docker Compose services.
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: buildkite/agent commit
+        default: 23e06924dac1b683bc8653b731cd633af67d4a8a
+      runner:
+        description: runs-on label
+        default: ubuntu-24.04-arm
+        type: choice
+        options: [ubuntu-24.04-arm, ubuntu-24.04]
+env:
+  BUILDKITE_BUILD_NUMBER: ${{ github.run_number }}
+jobs:
+  lint:
+    name: Lint
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { repository: buildkite/agent, ref: "${{ inputs.ref }}" }
+      - run: |
+          docker compose -f .buildkite/docker-compose.yml run --rm lint sh -euc '
+            git config --global --add safe.directory /work
+            go mod tidy
+            git diff --no-ext-diff --exit-code
+            out="$(go tool gofumpt -extra -l .)"
+            if [ -n "$out" ]; then echo "Not formatted with gofumpt:"; echo "$out"; exit 1; fi
+            go generate ./...
+            git diff --no-ext-diff --exit-code
+            golangci-lint run --color=always
+          '
+
+  tests:
+    name: ${{ matrix.race && 'Detect Data Races' || 'Linux Tests' }} ${{ matrix.shard }}
+    runs-on: ${{ inputs.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { shard: 0, count: 2, race: "" }
+          - { shard: 1, count: 2, race: "" }
+          - { shard: 0, count: 3, race: "1" }
+          - { shard: 1, count: 3, race: "1" }
+          - { shard: 2, count: 3, race: "1" }
+    env:
+      BUILDKITE_PARALLEL_JOB: ${{ matrix.shard }}
+      BUILDKITE_PARALLEL_JOB_COUNT: ${{ matrix.count }}
+      RACE: ${{ matrix.race }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { repository: buildkite/agent, ref: "${{ inputs.ref }}" }
+      - run: |
+          docker compose -f .buildkite/docker-compose.yml run --rm \
+            -e BUILDKITE_PARALLEL_JOB -e BUILDKITE_PARALLEL_JOB_COUNT -e RACE agent bash -euo pipefail -c '
+            git config --global --add safe.directory /work
+            go version
+            packages="$(go list ./... | awk -v n="$BUILDKITE_PARALLEL_JOB_COUNT" -v i="$BUILDKITE_PARALLEL_JOB" "NR % n == i")"
+            echo "Testing $(echo "$packages" | wc -l) packages ${RACE:+with the race detector}"
+            go tool gotestsum --format testname --junitfile "junit-$BUILDKITE_PARALLEL_JOB.xml" -- -count=1 ${RACE:+-race} $packages
+          '
+
+  build:
+    name: Build ${{ matrix.os }}/${{ matrix.arch }}
+    runs-on: ${{ inputs.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [linux, darwin, windows]
+        arch: [amd64, arm64]
+        exclude:
+          - { os: windows, arch: arm64 }
+    steps:
+      - uses: actions/checkout@v4
+        with: { repository: buildkite/agent, ref: "${{ inputs.ref }}" }
+      - run: |
+          docker compose -f .buildkite/docker-compose.yml run --rm agent bash -euo pipefail -c '
+            git config --global --add safe.directory /work
+            ./scripts/build-binary.sh ${{ matrix.os }} ${{ matrix.arch }} "$BUILDKITE_BUILD_NUMBER"
+            ls -l pkg
+          '
